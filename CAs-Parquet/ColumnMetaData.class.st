@@ -29,9 +29,11 @@ Class {
 ColumnMetaData >> fromDict: aDict [
 
 	type := aDict at: 1.
-	self halt.encodings:= aDict at:2. "list of Encoding".
-	self halt.path_in_schema:=aDict at:3. "list of string"
-	self halt.codec :=aDict at:4."CompressionCodec"
+	encodings:= aDict at:2. 
+	self validateEncodings.
+	path_in_schema:=(aDict at:3)collect: #asString.
+	codec :=aDict at:4.
+	self validateCompressionCodec .
 	num_values:=aDict  at:5.
 	total_uncompressed_size:=aDict at:6.
 	total_compressed_size:=aDict at:7.
@@ -39,10 +41,55 @@ ColumnMetaData >> fromDict: aDict [
 	data_page_offset:=aDict at:9.
 	aDict at: 10 ifPresent: [ :val | index_page_offset := val].
 	aDict at: 11 ifPresent: [ :val | dictionary_page_offset := val].
-	aDict at: 12 ifPresent: [ :val |self halt. statistics:= val]."Statistics"
+	aDict at: 12 ifPresent: [ :val |statistics:=Statistics new fromDict: val].
 	aDict at: 13 ifPresent: [ :val | self halt.encoding_stats := val]."list<PageEncodingStats>"
 	aDict at: 14 ifPresent: [ :val | bloom_filter_offset:= val].
 	aDict at: 15 ifPresent: [ :val | bloom_filter_length:= val].
 	aDict at: 16 ifPresent: [ :val | self halt.size_statistics:= val]."SizeStatistics "
 	aDict at: 17 ifPresent: [ :val |self halt. geospatial_statistics:= val]."GeospatialStatistics "
+]
+
+{ #category : 'accessing' }
+ColumnMetaData >> path_in_schema [
+
+	^ path_in_schema first
+]
+
+{ #category : 'printing' }
+ColumnMetaData >> printOn: aStream [
+
+	super printOn: aStream.
+	aStream
+		nextPut: $(;
+		nextPutAll: self path_in_schema;
+		nextPut: $)
+]
+
+{ #category : 'as yet unclassified' }
+ColumnMetaData >> validateCompressionCodec [
+	"enum CompressionCodec {
+  UNCOMPRESSED = 0;
+  SNAPPY = 1;
+  GZIP = 2;
+  LZO = 3;
+  BROTLI = 4;  // Added in 2.4
+  LZ4 = 5;     // DEPRECATED (Added in 2.4)
+  ZSTD = 6;    // Added in 2.4
+  LZ4_RAW = 7; // Added in 2.9
+	}"
+
+	(#( 0) includes: codec) ifFalse: [
+		self error: 'Unknown CompressionCodec' ]
+]
+
+{ #category : 'as yet unclassified' }
+ColumnMetaData >> validateEncodings [
+	"Encodings:
+	PLAIN = 0;
+	PLAIN_DICTIONARY = 2;
+	RLE = 3;
+	BIT_PACKED = 4;"
+
+	(#( 0 2 3 4 ) includesAll: encodings) ifFalse: [
+		self error: 'Unknown encoding' ] 
 ]

@@ -10,7 +10,8 @@ Class {
 		'key_value_metadata',
 		'created_by',
 		'column_orders',
-		'encryption_algorithm'
+		'encryption_algorithm',
+		'footer_signing_key_metadata'
 	],
 	#category : 'CAs-Parquet-Metadata',
 	#package : 'CAs-Parquet',
@@ -40,21 +41,29 @@ ParqFooter >> parse2: buff [
 	schema := (meta at: 2) collect: [ :dict |
 		          SchemaElement new fromDict: dict ].
 	num_rows := meta at: 3.
-	self halt.
-		row_groups := (meta at: 4) collect: [ :dict |
-		              RowGroup new fromDict: dict ]. 
-	meta at: 5 ifPresent: [ :val |
+	row_groups := (meta at: 4) collect: [ :dict |
+		              RowGroup new fromDict: dict ].
+	meta at: 5 ifPresent: [ :val | self halt.
 			key_value_metadata := val collect: [ :dict |
 				                      KeyValue new fromDict: dict ] ].
 	created_by := (meta at: 6) asString.
-	column_orders := 0.
-	encryption_algorithm := 0
+	meta at: 7 ifPresent: [ :val | self halt.
+			column_orders := val collect: [ :dict |
+				                      KeyValue new fromDict: dict ] ].
+		meta at: 8 ifPresent: [ :val | self halt.
+			encryption_algorithm := val collect: [ :dict |
+				                      KeyValue new fromDict: dict ] ].
+		meta at: 9 ifPresent: [ :val | self halt.
+			footer_signing_key_metadata := val collect: [ :dict |
+				                      KeyValue new fromDict: dict ] ].
+
 ]
 
 { #category : 'accessing' }
 ParqFooter >> parse: buff [
 
 	| tmp |
+	self deprecated: 'använd parse2 istället'.
 	self halt.
 	buff readStreamDo: [ :s |
 			version := VarInt readZigZag: s.

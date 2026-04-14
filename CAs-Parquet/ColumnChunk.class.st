@@ -14,20 +14,17 @@ Class {
 { #category : 'instance creation' }
 ColumnChunk >> fromDict: aDict [
 
-	self halt.
-	aDict at: 1 ifPresent: [ :val | 	file_path := val].
+	aDict at: 1 ifPresent: [ :val | file_path := val ].
 	file_offset := aDict at: 2.
-	meta_data := ColumnMetaData new fromDict: (aDict at: 3).
-	" (aDict at: 1) collect: [ :dict |
-		                 ColumnChunk new fromDict: dict"
+	meta_data := ColumnMetaData new fromDict: (aDict at: 3)
 ]
 
 { #category : 'printing' }
 ColumnChunk >> printOn: aStream [
 
-	super printOn: aStream
-	"aStream
+	super printOn: aStream.
+	aStream
 		nextPut: $(;
-		nextPutAll: name;
-		nextPut: $)"
+		nextPutAll: meta_data path_in_schema;
+		nextPut: $)
 ]
