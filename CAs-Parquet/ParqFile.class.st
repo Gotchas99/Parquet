@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'file',
 		's',
-		'footerLength'
+		'metadata'
 	],
 	#category : 'CAs-Parquet-Core',
 	#package : 'CAs-Parquet',
@@ -21,14 +21,11 @@ ParqFile >> file: aFile [
 file := aFile asFileReference .
 ]
 
-{ #category : 'as yet unclassified' }
-ParqFile >> footer [
+{ #category : 'accessing' }
+ParqFile >> metadata [
 
-	| bytes footer |
-	s position: s size - 4 - 4 - footerLength.
-	bytes := s next: footerLength.
-	footer := ParqFooter new bytes: bytes.
-	^ footer
+
+	^ metadata
 ]
 
 { #category : 'accessing' }
@@ -41,8 +38,19 @@ ParqFile >> open [
 	self assert: (s
 			 position: s size - 4;
 			 next: 4) asString = 'PAR1'.
+	self readMetadata.
+
+]
+
+{ #category : 'accessing' }
+ParqFile >> readMetadata [
+
+	| bytes footerLength |
 	footerLength := s
 		                position: s size - 8;
 		                nextLittleEndianNumber: 4.
-
+	s position: s size - 4 - 4 - footerLength.
+	bytes := s next: footerLength.
+	metadata := FileMetaData new bytes: bytes.
+	^ metadata
 ]

@@ -1,8 +1,7 @@
 Class {
-	#name : 'ParqFooter',
+	#name : 'FileMetaData',
 	#superclass : 'Object',
 	#instVars : [
-		'bytes',
 		'version',
 		'schema',
 		'num_rows',
@@ -19,21 +18,14 @@ Class {
 }
 
 { #category : 'accessing' }
-ParqFooter >> bytes: fileBytes [
+FileMetaData >> bytes: fileBytes [
 
-	bytes := fileBytes.
-	"self parse"
-]
-
-{ #category : 'accessing' }
-ParqFooter >> parse [
-
-	self parse2: bytes.
+	self parse2: fileBytes.
 	self assert: version = 1
 ]
 
 { #category : 'accessing' }
-ParqFooter >> parse2: buff [
+FileMetaData >> parse2: buff [
 
 	| meta |
 	buff readStreamDo: [ :s | meta := Thrift new readStruct: s ].
@@ -43,24 +35,27 @@ ParqFooter >> parse2: buff [
 	num_rows := meta at: 3.
 	row_groups := (meta at: 4) collect: [ :dict |
 		              RowGroup new fromDict: dict ].
-	meta at: 5 ifPresent: [ :val | self halt.
+	meta at: 5 ifPresent: [ :val |
 			key_value_metadata := val collect: [ :dict |
 				                      KeyValue new fromDict: dict ] ].
 	created_by := (meta at: 6) asString.
-	meta at: 7 ifPresent: [ :val | self halt.
+	"ColumnOrder is ignored. Didn't understand"
+	"meta at: 7 ifPresent: [ :val |
+			self halt.
 			column_orders := val collect: [ :dict |
-				                      KeyValue new fromDict: dict ] ].
-		meta at: 8 ifPresent: [ :val | self halt.
+				                 XXXXXXXXX new fromDict: dict ] ]."
+	meta at: 8 ifPresent: [ :val |
+			self halt.
 			encryption_algorithm := val collect: [ :dict |
-				                      KeyValue new fromDict: dict ] ].
-		meta at: 9 ifPresent: [ :val | self halt.
+				                        KeyValue new fromDict: dict ] ].
+	meta at: 9 ifPresent: [ :val |
+			self halt.
 			footer_signing_key_metadata := val collect: [ :dict |
-				                      KeyValue new fromDict: dict ] ].
-
+				                               KeyValue new fromDict: dict ] ]
 ]
 
 { #category : 'accessing' }
-ParqFooter >> parse: buff [
+FileMetaData >> parse: buff [
 
 	| tmp |
 	self deprecated: 'använd parse2 istället'.
@@ -80,8 +75,8 @@ ParqFooter >> parse: buff [
 			encryption_algorithm := 0 ]
 ]
 
-{ #category : 'versions' }
-ParqFooter >> version [
+{ #category : 'accessing' }
+FileMetaData >> version [
 
 	^version
 ]

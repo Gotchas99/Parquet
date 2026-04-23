@@ -60,6 +60,10 @@ Thrift >> readStruct: s [
 			fieldId := delta = 0
 				           ifTrue: [ VarInt readVarInt: s ]
 				           ifFalse: [ fieldId + delta ].
-			fields at: fieldId put: (self readElementFrom: s type: type) ].
+				"1 and 2 are booleans"
+			type <= 2
+				ifTrue: [ fields at: fieldId put: (type=1)]
+				ifFalse: [
+				fields at: fieldId put: (self readElementFrom: s type: type) ]  ].
 	^ fields
 ]

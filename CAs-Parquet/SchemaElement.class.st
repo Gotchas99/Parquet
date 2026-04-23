@@ -109,31 +109,26 @@ SchemaElement >> fromDict: aDict [
    *
    * This is superseded by logicalType.
    */"
-	dict at: 6 ifPresent: [ :val |
-					converted_type := val  ].
+	dict at: 6 ifPresent: [ :val | converted_type := val ].
 	" /**
    * DEPRECATED: Used when this column contains decimal data.
    * See the DECIMAL converted type for more details.
    *
    * This is superseded by using the DecimalType annotation in logicalType.
    */"
-	dict at: 7 ifPresent: [ :val |
-			scale := val  ].
-	dict at: 8 ifPresent: [ :val |
-			precision := val  ].
+	dict at: 7 ifPresent: [ :val | scale := val ].
+	dict at: 8 ifPresent: [ :val | precision := val ].
 	"/** When the original schema supports field ids, this will save the
    * original field id in the parquet schema
    */"
-	dict at: 9 ifPresent: [ :val |
-			field_id := val  ].
+	dict at: 9 ifPresent: [ :val | field_id := val ].
 	"/**
    * The logical type of this SchemaElement
    *
    * LogicalType replaces ConvertedType, but ConvertedType is still required
    * for some logical types to ensure forward-compatibility in format v1.
    */"
-	dict at: 10 ifPresent: [ :val |
-				logicalType := val asString ]
+	dict at: 10 ifPresent: [ :val | self traceCr:'LogicalType found'.logicalType := val asString ]
 ]
 
 { #category : 'printing' }

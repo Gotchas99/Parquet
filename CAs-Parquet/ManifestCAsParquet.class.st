@@ -13,5 +13,5 @@ Class {
 ManifestCAsParquet class >> ruleReCollectionAtCollectionSizeRuleV1FalsePositive [
 
 	<ignoreForCoverage>
-	^ #(#(#(#RGMethodDefinition #(#ParqFooter #parse2: #false)) #'2026-04-14T08:13:28.945+02:00') )
+	^ #(#(#(#RGMethodDefinition #(#FileMetaData #parse2: #false)) #'2026-04-14T08:13:28.945+02:00') #(#(#RGMethodDefinition #(#ColumnMetaData #fromDict: #false)) #'2026-04-14T09:37:47.845+02:00') )
 ]
