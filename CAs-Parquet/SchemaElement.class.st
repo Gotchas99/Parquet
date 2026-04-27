@@ -131,6 +131,10 @@ SchemaElement >> fromDict: aDict [
 	dict at: 10 ifPresent: [ :val | self traceCr:'LogicalType found'.logicalType := val asString ]
 ]
 
+{ #category : 'accessing' }
+SchemaElement >> name [ ^name
+]
+
 { #category : 'printing' }
 SchemaElement >> printOn: aStream [
 

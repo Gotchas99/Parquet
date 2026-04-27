@@ -24,6 +24,12 @@ FileMetaData >> bytes: fileBytes [
 	self assert: version = 1
 ]
 
+{ #category : 'as yet unclassified' }
+FileMetaData >> chunksFor: aColName [
+
+	^row_groups collect:[:rg|rg chunkFor: aColName ]
+]
+
 { #category : 'accessing' }
 FileMetaData >> parse2: buff [
 
@@ -73,6 +79,11 @@ FileMetaData >> parse: buff [
 			created_by := 'x'.
 			column_orders := 0.
 			encryption_algorithm := 0 ]
+]
+
+{ #category : 'accessing' }
+FileMetaData >> schema [
+^schema
 ]
 
 { #category : 'accessing' }

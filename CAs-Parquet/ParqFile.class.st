@@ -16,9 +16,24 @@ ParqFile >> close [
 s ifNotNil:[s close.s := nil]
 ]
 
+{ #category : 'rendering' }
+ParqFile >> columnNames [
+
+	| cols |
+	cols := metadata schema allButFirst collect: [ :c | c name ]. ^cols
+]
+
 { #category : 'accessing' }
 ParqFile >> file: aFile [
 file := aFile asFileReference .
+]
+
+{ #category : 'rendering' }
+ParqFile >> getColumns: colList [
+
+	| c cc |
+	c := colList first.
+	^cc := metadata chunksFor: c.
 ]
 
 { #category : 'accessing' }

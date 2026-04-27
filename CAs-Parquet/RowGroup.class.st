@@ -11,6 +11,13 @@ Class {
 	#tag : 'Metadata'
 }
 
+{ #category : 'as yet unclassified' }
+RowGroup >> chunkFor: aColName [
+
+	| chunk |
+	chunk:= column_chunks detect:[:each|each name=aColName ].^chunk
+]
+
 { #category : 'instance creation' }
 RowGroup >> fromDict: aDict [
 

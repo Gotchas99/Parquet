@@ -54,6 +54,11 @@ ColumnChunk >> fromDict: aDict [
 ]
 
 { #category : 'printing' }
+ColumnChunk >> name [ 
+^meta_data path_in_schema
+]
+
+{ #category : 'printing' }
 ColumnChunk >> printOn: aStream [
 
 	super printOn: aStream.
