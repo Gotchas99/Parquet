@@ -31,9 +31,13 @@ file := aFile asFileReference .
 { #category : 'rendering' }
 ParqFile >> getColumns: colList [
 
-	| c cc |
+	| c chunk ph dp |
 	c := colList first.
-	^cc := metadata chunksFor: c.
+	chunk := (metadata chunksFor: c)first.
+
+	ph := PageHeader new readFrom: s pos: chunk dp_filepos.
+	self halt.
+	dp := 5
 ]
 
 { #category : 'accessing' }

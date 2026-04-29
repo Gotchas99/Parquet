@@ -1,6 +1,6 @@
 Class {
 	#name : 'IndexPageHeader',
-	#superclass : 'PageHeader',
+	#superclass : 'Object',
 	#category : 'CAs-Parquet-Metadata',
 	#package : 'CAs-Parquet',
 	#tag : 'Metadata'

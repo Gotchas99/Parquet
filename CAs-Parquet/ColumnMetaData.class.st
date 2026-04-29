@@ -25,6 +25,10 @@ Class {
 	#tag : 'Metadata'
 }
 
+{ #category : 'accessing' }
+ColumnMetaData >> data_page_offset [ ^data_page_offset
+]
+
 { #category : 'instance creation' }
 ColumnMetaData >> fromDict: aDict [
 
