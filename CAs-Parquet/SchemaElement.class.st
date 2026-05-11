@@ -12,7 +12,9 @@ Class {
 		'scale',
 		'precision',
 		'field_id',
-		'logicalType'
+		'logicalType',
+		'mrl',
+		'mdl'
 	],
 	#pools : [
 		'TypePool'
@@ -94,6 +96,12 @@ SchemaElement >> fromDict: aDict [
 	dict at: 2 ifPresent: [ :val | type_length := val ].
 	"/** repetition of the field. The root of the schema does not have a repetition_type.
    * All other nodes must have one */"
+	"/** This field is required (can not be null) and each row has exactly 1 value. */
+   REQUIRED = 0;
+   /** The field is optional (can be null) and each row has 0 or 1 values. */
+   OPTIONAL = 1;
+   /** The field is repeated and can contain 0 or more values */
+   REPEATED = 2;"
 	dict at: 3 ifPresent: [ :val | repetition_type := val ].
 	"/** Name of the field in the schema */"
 	name := (dict at: 4) asString.
@@ -109,7 +117,9 @@ SchemaElement >> fromDict: aDict [
    *
    * This is superseded by logicalType.
    */"
-	dict at: 6 ifPresent: [ :val | converted_type := val ].
+	dict at: 6 ifPresent: [ :val | converted_type := val .
+		(#( 0 ) includesAll: converted_type) ifFalse: [
+		self error: 'Unknown encoding' ].].
 	" /**
    * DEPRECATED: Used when this column contains decimal data.
    * See the DECIMAL converted type for more details.
@@ -128,7 +138,45 @@ SchemaElement >> fromDict: aDict [
    * LogicalType replaces ConvertedType, but ConvertedType is still required
    * for some logical types to ensure forward-compatibility in format v1.
    */"
-	dict at: 10 ifPresent: [ :val | self traceCr:'LogicalType found'.logicalType := val asString ]
+	dict at: 10 ifPresent: [ :val |
+			self traceCr: 'LogicalType found'.
+			logicalType := val asString ]
+]
+
+{ #category : 'testing' }
+SchemaElement >> hasChildren [ 
+
+
+	^  num_children isNotNil and:[num_children >0]
+]
+
+{ #category : 'testing' }
+SchemaElement >> isOptional [ 
+^repetition_type>0
+]
+
+{ #category : 'testing' }
+SchemaElement >> isRoot [ 
+^repetition_type isNil
+]
+
+{ #category : 'accessing' }
+SchemaElement >> logicalType [
+
+	logicalType ifNotNil: [
+			self halt.
+			^ logicalType ].
+	"BYTE_ARRAY"
+	type = 6 ifTrue: [ converted_type = 0 ifTrue: [ ^ #STRING ] ].
+	self error: 'Unknown type'
+]
+
+{ #category : 'accessing' }
+SchemaElement >> mdl [ ^1
+]
+
+{ #category : 'accessing' }
+SchemaElement >> mrl [ ^0
 ]
 
 { #category : 'accessing' }
@@ -139,8 +187,12 @@ SchemaElement >> name [ ^name
 SchemaElement >> printOn: aStream [
 
 	super printOn: aStream.
-	aStream
-		nextPut: $(;
-		nextPutAll: name;
-		nextPut: $)
+	aStream nextPut: $(. 
+	aStream << name << '/' << type asString.
+	aStream nextPut: $)
+]
+
+{ #category : 'accessing' }
+SchemaElement >> wDef [ 
+^(	(mdl+1) log:2)floor
 ]

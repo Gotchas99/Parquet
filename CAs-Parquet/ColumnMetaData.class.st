@@ -2,6 +2,7 @@ Class {
 	#name : 'ColumnMetaData',
 	#superclass : 'Object',
 	#instVars : [
+		'schema',
 		'type',
 		'encodings',
 		'path_in_schema',
@@ -64,6 +65,17 @@ ColumnMetaData >> fromDict: aDict [
 ]
 
 { #category : 'accessing' }
+ColumnMetaData >> isNested [
+
+	^ path_in_schema size >1
+]
+
+{ #category : 'accessing' }
+ColumnMetaData >> logicalType [
+	^ schema logicalType
+]
+
+{ #category : 'accessing' }
 ColumnMetaData >> path_in_schema [
 
 	^ path_in_schema first
@@ -78,6 +90,22 @@ ColumnMetaData >> printOn: aStream [
 		nextPutAll: self path_in_schema;
 		nextPut: $).
 (		compressionCodec =2)ifTrue: [ aStream << '-GZIP' ]
+]
+
+{ #category : 'accessing' }
+ColumnMetaData >> schema [ ^
+
+	schema
+]
+
+{ #category : 'accessing' }
+ColumnMetaData >> schema: aSchemaElement [
+
+	schema :=aSchemaElement
+]
+
+{ #category : 'accessing' }
+ColumnMetaData >> type [ ^type
 ]
 
 { #category : 'as yet unclassified' }

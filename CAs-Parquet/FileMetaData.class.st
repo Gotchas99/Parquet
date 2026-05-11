@@ -87,6 +87,12 @@ FileMetaData >> schema [
 ]
 
 { #category : 'accessing' }
+FileMetaData >> schemaForName:aColName [
+
+	^ schema detect:[:el|el name = aColName ].
+]
+
+{ #category : 'accessing' }
 FileMetaData >> version [
 
 	^version

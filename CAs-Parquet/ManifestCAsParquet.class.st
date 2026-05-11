@@ -10,6 +10,13 @@ Class {
 }
 
 { #category : 'code-critics' }
+ManifestCAsParquet class >> ruleBadMessageRule2V1FalsePositive [
+
+	<ignoreForCoverage>
+	^ #(#(#(#RGMethodDefinition #(#DataPage #readFrom: #false)) #'2026-05-11T11:07:28.695+02:00') )
+]
+
+{ #category : 'code-critics' }
 ManifestCAsParquet class >> ruleReCollectionAtCollectionSizeRuleV1FalsePositive [
 
 	<ignoreForCoverage>

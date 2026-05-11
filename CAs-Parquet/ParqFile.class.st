@@ -31,13 +31,18 @@ file := aFile asFileReference .
 { #category : 'rendering' }
 ParqFile >> getColumns: colList [
 
-	| c chunk ph dp |
+	| c chunk ph dp res |
+	"bara första kolumen för nu"
 	c := colList first.
-	chunk := (metadata chunksFor: c)first.
+	chunk := (metadata chunksFor: c) first.
+	chunk schema: (metadata schemaForName: c).
 
 	ph := PageHeader new readFrom: s pos: chunk dp_filepos.
-	self halt.
-	dp := 5
+	dp := DataPage new.
+	dp metadata: chunk metadata.
+	dp pageHeader: ph.
+	res := dp readFrom: s.
+	^ res
 ]
 
 { #category : 'accessing' }

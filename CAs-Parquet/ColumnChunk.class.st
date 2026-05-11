@@ -3,7 +3,6 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'file_path',
-		'file_offset',
 		'meta_data'
 	],
 	#category : 'CAs-Parquet-Metadata',
@@ -22,7 +21,7 @@ ColumnChunk >> fromDict: aDict [
 
 	aDict at: 1 ifPresent: [ :val | file_path := val ].
 	"Deprecated: Byte offset in file_path to the ColumnMetaData"
-	file_offset := aDict at: 2.
+	"file_offset := aDict at: 2."
 	aDict
 		at: 3
 		ifPresent: [ :val | meta_data := ColumnMetaData new fromDict: val ].
@@ -32,6 +31,10 @@ ColumnChunk >> fromDict: aDict [
 	aDict at: 7 ifPresent: [ :val | self halt ].
 	aDict at: 8 ifPresent: [ :val | self halt ].
 	aDict at: 9 ifPresent: [ :val | self halt ]
+]
+
+{ #category : 'accessing' }
+ColumnChunk >> metadata [ ^meta_data 
 ]
 
 { #category : 'printing' }
@@ -47,4 +50,10 @@ ColumnChunk >> printOn: aStream [
 		nextPut: $(;
 		nextPutAll: meta_data path_in_schema;
 		nextPut: $)
+]
+
+{ #category : 'accessing' }
+ColumnChunk >> schema: aSchemaElement [
+
+	meta_data schema:aSchemaElement
 ]

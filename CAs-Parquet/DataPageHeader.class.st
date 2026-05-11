@@ -13,6 +13,10 @@ Class {
 	#tag : 'Metadata'
 }
 
+{ #category : 'accessing' }
+DataPageHeader >> encoding [ self assert: (encoding =0).^encoding 
+]
+
 { #category : 'instance creation' }
 DataPageHeader >> fromDict: aDict [
 
@@ -28,4 +32,9 @@ DataPageHeader >> fromDict: aDict [
 	aDict
 		at: 5
 		ifPresent: [ :val | statistics := Statistics new fromDict: val ]
+]
+
+{ #category : 'accessing' }
+DataPageHeader >> numValues [ ^num_values 
+
 ]
