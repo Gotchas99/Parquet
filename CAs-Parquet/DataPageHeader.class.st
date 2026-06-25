@@ -8,9 +8,9 @@ Class {
 		'repetition_level_encoding',
 		'statistics'
 	],
-	#category : 'CAs-Parquet-Metadata',
+	#category : 'CAs-Parquet-Core',
 	#package : 'CAs-Parquet',
-	#tag : 'Metadata'
+	#tag : 'Core'
 }
 
 { #category : 'accessing' }
@@ -27,6 +27,7 @@ DataPageHeader >> fromDict: aDict [
 	RLE = 3;
 	BIT_PACKED = 4;"
 	encoding := aDict at: 2.
+	self assert: encoding = 0.
 	definition_level_encoding := aDict at: 3.
 	repetition_level_encoding := aDict at: 4.
 	aDict

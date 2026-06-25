@@ -2,6 +2,7 @@ Class {
 	#name : 'DataPage',
 	#superclass : 'Object',
 	#instVars : [
+		'chunk',
 		'metadata',
 		'pageHeader'
 	],
@@ -10,12 +11,19 @@ Class {
 	#tag : 'Core'
 }
 
-{ #category : 'instance creation' }
+{ #category : 'accessing' }
+DataPage >> chunk: aColumnChunk [
+
+	chunk := aColumnChunk.
+	self metadata: chunk metadata.
+]
+
+{ #category : 'accessing' }
 DataPage >> metadata: aColumnMetadata [ 
 metadata :=aColumnMetadata
 ]
 
-{ #category : 'instance creation' }
+{ #category : 'accessing' }
 DataPage >> pageHeader: aPageHeader [
 
 	pageHeader := aPageHeader 
@@ -31,6 +39,19 @@ DataPage >> readByteArrayFrom: aStream [
 ]
 
 { #category : 'instance creation' }
+DataPage >> readDictionaryFrom: aStream [
+
+	| method block numValues res |
+	self halt.
+	metadata logicalType = #STRING ifTrue: [ method := #readStringFrom: ].
+	self assert: method isNotNil.
+	block := [ self perform: method with: aStream ].
+	numValues := pageHeader numValues.
+	res := OrderedCollection streamContents: [ :s |
+		       numValues timesRepeat: [ s nextPut: block value ] ].^res
+]
+
+{ #category : 'instance creation' }
 DataPage >> readFrom: aStream [
 
 	| numValues res method block |
@@ -38,14 +59,21 @@ DataPage >> readFrom: aStream [
 	"repetition level måste vara 0"
 	self assert: metadata schema mrl = 0.
 
-	method:=#halt.
-	metadata schema isOptional ifTrue: [ self readNullMaskFrom: aStream ].
-	metadata logicalType = #STRING ifTrue: [ method := #readStringFrom: ].
-	block := [ self perform: method with: aStream ].
-	numValues := pageHeader dataPageHeader numValues. 
-	res := OrderedCollection streamContents: [ :s |
-		       numValues timesRepeat: [ s nextPut: block value ] ].
-	^res
+	pageHeader := PageHeader new readFrom: aStream.
+	pageHeader isDictionary ifTrue: [
+			chunk dictionaryItems: (self readDictionaryFrom: aStream).
+			res := #(  ) ]. 
+	pageHeader isData ifTrue: [
+			metadata schema isOptional ifTrue: [
+				self readNullMaskFrom: aStream ].
+			metadata logicalType = #STRING ifTrue: [
+				method := #readStringFrom: ].
+			self assert: method isNotNil.
+			block := [ self perform: method with: aStream ].
+			numValues := pageHeader numValues.
+			res := OrderedCollection streamContents: [ :s |
+				       numValues timesRepeat: [ s nextPut: block value ] ] ].
+	^ res
 ]
 
 { #category : 'as yet unclassified' }
@@ -55,6 +83,16 @@ DataPage >> readNullMaskFrom: aStream [
 	"length in bytes"
 	len:= aStream nextLittleEndianNumber:4.
 	rle:= RLEelement new readFrom: aStream length: len.
+	
+]
+
+{ #category : 'instance creation' }
+DataPage >> readPageHeaderFrom: aStream [
+
+ 
+self halt.
+	pageHeader := PageHeader new readFrom: aStream.
+
 	
 ]
 

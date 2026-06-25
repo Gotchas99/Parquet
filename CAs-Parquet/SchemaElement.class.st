@@ -118,7 +118,7 @@ SchemaElement >> fromDict: aDict [
    * This is superseded by logicalType.
    */"
 	dict at: 6 ifPresent: [ :val | converted_type := val .
-		(#( 0 ) includesAll: converted_type) ifFalse: [
+		(#( 0 ) includes: converted_type) ifFalse: [
 		self error: 'Unknown encoding' ].].
 	" /**
    * DEPRECATED: Used when this column contains decimal data.
@@ -166,6 +166,8 @@ SchemaElement >> logicalType [
 	logicalType ifNotNil: [
 			self halt.
 			^ logicalType ].
+		"Integer"
+		type=1 ifTrue:[ ^1].
 	"BYTE_ARRAY"
 	type = 6 ifTrue: [ converted_type = 0 ifTrue: [ ^ #STRING ] ].
 	self error: 'Unknown type'

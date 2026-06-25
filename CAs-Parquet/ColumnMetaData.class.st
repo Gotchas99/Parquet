@@ -76,6 +76,12 @@ ColumnMetaData >> logicalType [
 ]
 
 { #category : 'accessing' }
+ColumnMetaData >> numValues [
+
+	^num_values
+]
+
+{ #category : 'accessing' }
 ColumnMetaData >> path_in_schema [
 
 	^ path_in_schema first

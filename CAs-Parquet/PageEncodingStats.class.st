@@ -6,9 +6,9 @@ Class {
 		'encoding',
 		'count'
 	],
-	#category : 'CAs-Parquet-Metadata',
+	#category : 'CAs-Parquet-Core',
 	#package : 'CAs-Parquet',
-	#tag : 'Metadata'
+	#tag : 'Core'
 }
 
 { #category : 'instance creation' }

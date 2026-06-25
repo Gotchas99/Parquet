@@ -14,9 +14,9 @@ Class {
 { #category : 'as yet unclassified' }
 RowGroup >> chunkFor: aColName [
 
-	| chunk dp ph |
-	chunk:= column_chunks detect:[:each|each name=aColName ].
-	^chunk
+	| chunk |
+	chunk := column_chunks detect: [ :each | each name = aColName ].
+	^ chunk
 ]
 
 { #category : 'instance creation' }

@@ -16,7 +16,7 @@ ParqFile >> close [
 s ifNotNil:[s close.s := nil]
 ]
 
-{ #category : 'rendering' }
+{ #category : 'accessing' }
 ParqFile >> columnNames [
 
 	| cols |
@@ -28,21 +28,36 @@ ParqFile >> file: aFile [
 file := aFile asFileReference .
 ]
 
-{ #category : 'rendering' }
+{ #category : 'accessing' }
+ParqFile >> getColumn: colName [
+
+	| chunk dp res readValues tmp |
+	chunk := (metadata chunksFor: colName) first.
+	chunk schema: (metadata schemaForName: colName).
+	s position: chunk dp_filepos.
+	readValues:=0.
+	res:=OrderedCollection new.
+self halt.
+	[ readValues<chunk numValues ]whileTrue: [
+	dp := DataPage new.
+	dp chunk: chunk.
+	tmp:= dp readFrom: s.
+	readValues :=readValues+tmp size.
+	res append:tmp. ].
+	"ds := DataSeries withValues: res name: colName."
+	^ res
+]
+
+{ #category : 'accessing' }
 ParqFile >> getColumns: colList [
 
-	| c chunk ph dp res |
-	"bara första kolumen för nu"
-	c := colList first.
-	chunk := (metadata chunksFor: c) first.
-	chunk schema: (metadata schemaForName: c).
-
-	ph := PageHeader new readFrom: s pos: chunk dp_filepos.
-	dp := DataPage new.
-	dp metadata: chunk metadata.
-	dp pageHeader: ph.
-	res := dp readFrom: s.
-	^ res
+	| res df |
+	self assert: metadata isNotNil.
+	s := self stream.
+	res := colList collect: [ :col | self getColumn: col ].
+	df := DataFrame withColumns: res columnNames: colList.
+	self close.
+	^ df
 ]
 
 { #category : 'accessing' }
@@ -55,7 +70,7 @@ ParqFile >> metadata [
 { #category : 'accessing' }
 ParqFile >> open [
 
-	s := file binaryReadStream.
+	s := self stream.
 	self assert: (s
 			 position: 0;
 			 next: 4) asString = 'PAR1'.
@@ -63,7 +78,7 @@ ParqFile >> open [
 			 position: s size - 4;
 			 next: 4) asString = 'PAR1'.
 	self readMetadata.
-
+	self close
 ]
 
 { #category : 'accessing' }
@@ -77,4 +92,11 @@ ParqFile >> readMetadata [
 	bytes := s next: footerLength.
 	metadata := FileMetaData new bytes: bytes.
 	^ metadata
+]
+
+{ #category : 'accessing' }
+ParqFile >> stream [
+
+	s := file binaryReadStream.
+	^s
 ]

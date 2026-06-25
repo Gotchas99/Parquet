@@ -3,14 +3,27 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'file_path',
-		'meta_data'
+		'meta_data',
+		'dictionaryItems'
 	],
-	#category : 'CAs-Parquet-Metadata',
+	#category : 'CAs-Parquet-Core',
 	#package : 'CAs-Parquet',
-	#tag : 'Metadata'
+	#tag : 'Core'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
+ColumnChunk >> at:index [
+
+	dictionaryItems at:index
+]
+
+{ #category : 'accessing' }
+ColumnChunk >> dictionaryItems: anOrderedCollection [
+
+	dictionaryItems := anOrderedCollection
+]
+
+{ #category : 'accessing' }
 ColumnChunk >> dp_filepos [
 
 	^meta_data data_page_offset.
@@ -37,9 +50,15 @@ ColumnChunk >> fromDict: aDict [
 ColumnChunk >> metadata [ ^meta_data 
 ]
 
-{ #category : 'printing' }
+{ #category : 'accessing' }
 ColumnChunk >> name [ 
 ^meta_data path_in_schema
+]
+
+{ #category : 'accessing' }
+ColumnChunk >> numValues [
+
+	^ meta_data numValues
 ]
 
 { #category : 'printing' }
